@@ -41,9 +41,12 @@ namespace StudentTeacherAPI.Controllers
         [Authorize(Roles = "Teacher")]
         public IActionResult Create([FromBody] Record record)
         {
-            // Get logged in user's ID from JWT token
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            record.CreatedBy = 1; // placeholder, we'll use email to find user if needed
+            if (record == null)
+                return BadRequest("Record cannot be null.");
+
+            if (string.IsNullOrEmpty(record.Title))
+                return BadRequest("Title is required.");
+
             _recordDAL.CreateRecord(record);
             return Ok("Record created successfully!");
         }
